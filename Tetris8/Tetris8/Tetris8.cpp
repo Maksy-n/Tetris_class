@@ -187,13 +187,23 @@ private:
 		}
 	};
 };
+
+
+
 class Tetramina
 {
+	static Tetramina *setArrayTetramina[7] = { *TTetramina };
+
 public:
+
+	
+
 	Tetramina(int figureNum)
 	{
+		
 		collsNum = 0;
 		tetramNum = figureNum;
+		///Tetramina selectFigClass[7];
 		setNewFigure(tetramNum, collsNum);
 	};
 
@@ -205,7 +215,7 @@ public:
 	{
 		return tetramY[i];
 	}
-	virtual void transform(int figureNum, int coll) = 0;
+	virtual void transform(int figureNum, int coll) ;
 	
 	int getTetramNum()
 	{
@@ -287,7 +297,25 @@ private:
 	};
 };
 
-
+class TTetramina:Tetramina
+{
+	void setNewFigure(int fig, int coll) 
+	{
+		
+			int tetramina[TTRM * 2] = { 1, 2, 3, 2, 2, 2, 2, 3 };
+			setTetramVal(tetramina, fig);
+		
+			int tetramina[TTRM * 2] = { 2, 2, 2, 1, 1, 2, 3, 2 };
+			setTetramVal(tetramina, fig);
+		
+			int tetramina[TTRM * 2] = { 1, 2, 3, 2, 2, 2, 2, 1 };
+			setTetramVal(tetramina, fig);
+	
+			int tetramina[TTRM * 2] = { 2, 2, 2, 3, 1, 2, 3, 2 };
+			setTetramVal(tetramina, fig);
+		
+	}
+};
 
 class Glass
 {
@@ -369,7 +397,6 @@ int main() {
 	bool exitToMain = false;
 
 	int keyPad(unsigned int&);
-
 
 	srand(time(0));
 
