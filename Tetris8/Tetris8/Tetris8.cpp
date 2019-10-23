@@ -188,24 +188,56 @@ private:
 	};
 };
 
-
+class TTetramina 
+{
+	void setNewFigure(int fig, int coll) 
+	{
+		int tetramina[4][TTRM * 2] = {	1, 2, 3, 2, 2, 2, 2, 3,
+										2, 2, 2, 1, 1, 2, 3, 2,
+										1, 2, 3, 2, 2, 2, 2, 1,
+										2, 2, 2, 3, 1, 2, 3, 2 };
+		//setTetramVal(tetramina, fig);
+	}
+};
 
 class Tetramina
 {
-	static Tetramina *setArrayTetramina[7] = { *TTetramina };
-
 public:
-
-	
 
 	Tetramina(int figureNum)
 	{
-		
+
+		switch (figureNum)//O
+		{
+		case 0:
+		{
+			int tetramina[TTRM * 2] = { 2, 3, 2, 3, 2, 3, 3, 2 };
+			setTetramVal(tetramina, fig);
+		}break;
+
+		case 1:
+		{
+			
+		}break;
+
+		case 2:
+		{
+			TTetramina figure;
+		}break;
+		default:
+			break;
+		}
+
+
+
 		collsNum = 0;
 		tetramNum = figureNum;
 		///Tetramina selectFigClass[7];
 		setNewFigure(tetramNum, collsNum);
 	};
+	static TTetramina tetrT;
+	static Tetramina setArrayTetramina[7];
+	setArrayTetramina[0] = tetrT;
 
 	int getXTetram(int i)
 	{
@@ -215,8 +247,8 @@ public:
 	{
 		return tetramY[i];
 	}
-	virtual void transform(int figureNum, int coll) ;
-	
+	virtual void transform(int figureNum, int coll);
+
 	int getTetramNum()
 	{
 		return tetramNum;
@@ -238,7 +270,7 @@ private:
 		tetramNum = z;
 		collsNum = 0;
 	}
-	void setNewFigure(int fig, int coll)
+	virtual void setNewFigure(int fig, int coll) 
 	{
 		switch (fig)//O
 		{
@@ -294,35 +326,14 @@ private:
 		default:
 			break;
 		}
-	};
-};
-
-class TTetramina:Tetramina
-{
-	void setNewFigure(int fig, int coll) 
-	{
-		
-			int tetramina[TTRM * 2] = { 1, 2, 3, 2, 2, 2, 2, 3 };
-			setTetramVal(tetramina, fig);
-		
-			int tetramina[TTRM * 2] = { 2, 2, 2, 1, 1, 2, 3, 2 };
-			setTetramVal(tetramina, fig);
-		
-			int tetramina[TTRM * 2] = { 1, 2, 3, 2, 2, 2, 2, 1 };
-			setTetramVal(tetramina, fig);
-	
-			int tetramina[TTRM * 2] = { 2, 2, 2, 3, 1, 2, 3, 2 };
-			setTetramVal(tetramina, fig);
-		
 	}
 };
+
+
 
 class Glass
 {
 public:
-	Glass()
-	{
-	}
 
 	bool getPoint(int Y, int X)
 	{
@@ -333,10 +344,10 @@ public:
 		return theGlass[Y][X].color;
 	}
 
-	void setPoint(int Y, int X, int co)
+	void setPoint(int Y, int X, int setColor)
 	{
 		theGlass[Y][X].point = true;
-		theGlass[Y][X].color = co;
+		theGlass[Y][X].color = setColor;
 	}
 
 	int delLine()
@@ -352,7 +363,8 @@ public:
 
 				for (size_t j = 0; j < WidthOfGlass; j++)
 				{
-					if (theGlass[i][j].point == 0) {
+					if (theGlass[i][j].point == 0)
+					{
 						delLine = false;
 						break;
 					}
@@ -500,7 +512,7 @@ int main() {
 								//if (field[i][j] == 0) continue;
 								if (toPrintGlass.getPoint(i, j) == 0) continue;
 								s.setTextureRect(IntRect(toPrintGlass.getColor(i, j) * 18, 0, 18, 18));
-								
+
 								s.setPosition(j * 18, (i - 2) * 18);
 								s.move(28, 31); //offset
 								window.draw(s);
@@ -519,7 +531,7 @@ int main() {
 
 					}
 					//end draw
-					
+
 				}
 
 				for (size_t i = 0; i < TTRM; i++)
