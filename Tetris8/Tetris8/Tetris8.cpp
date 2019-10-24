@@ -14,12 +14,10 @@ const int WidthOfGlass = 10;
 const int NMain = 20;
 const int TTRM = 4;
 
-
-
-class Figure
+/*class BidTpmFigure
 {
 public:
-	Figure(int figureNum)
+	BidTpmFigure(int figureNum)
 	{
 		collsNum = 0;
 		tetramNum = figureNum;
@@ -117,81 +115,9 @@ private:
 		}
 	};
 };
+*/
 
-
-class Tetramina
-{
-public:
-
-	Tetramina(int figureNum,  Tetramina2 *newTetramina)
-	{
-
-		switch (figureNum)//O
-		{
-		case 0:
-		{
-			/*int tetramina[TTRM * 2] = { 2, 3, 2, 3, 2, 3, 3, 2 };
-			setTetramVal(tetramina, fig);*/
-		}break;
-
-		case 1:
-		{
-			ITetramina figure;
-			newTetramina = &figure;			
-
-		}break;
-
-		case 2:
-		{
-			TTetramina figure;
-			Tetramina2 *newFigure = &figure;
-		}break;
-		default:
-			break;
-		}
-
-		/*collsNum = 0;
-		tetramNum = figureNum;
-		///Tetramina selectFigClass[7];
-		setNewFigure(tetramNum, collsNum);*/
-	};
-
-	int getTetramNum()
-	{
-		return tetramNum;
-	}
-
-private:
-	int tetramX[TTRM];
-	int tetramY[TTRM];
-	int tetramNum;
-	int collsNum;
-
-	void setTetramVal(int*  x, int  z)
-	{
-		for (size_t i = 0; i < TTRM; i++)
-		{
-			tetramX[i] = x[i];
-			tetramY[i] = x[i + TTRM];
-		}
-		tetramNum = z;
-		collsNum = 0;
-	}
-	virtual void setNewFigure(int fig, int coll)
-	{
-		switch (fig)//O
-		{
-		case 0:
-		{
-			int tetramina[TTRM * 2] = { 2, 3, 2, 3, 2, 3, 3, 2 };
-			setTetramVal(tetramina, fig);
-		}break;
-		default:
-			break;
-		}
-	}
-};
-class Tetramina2
+class TetraminaVirtual
 {
 public:
 	virtual int getXTetram(int i) = 0;
@@ -200,7 +126,30 @@ public:
 
 	virtual void transform() = 0;
 };
-class TTetramina : public Tetramina2
+
+class OTetramina : public TetraminaVirtual
+{
+public:
+
+	int getXTetram(int i) override // получение значения X
+	{
+		return tetramina[tetramAngle][i];
+	}
+	int getYTetram(int i)override  // получение значения Y
+	{
+		return tetramina[tetramAngle][i + 1];
+	}
+
+	void transform() override //функция поворота
+	{
+		tetramAngle;
+	};
+private:
+	int tetramAngle = 0;
+	int tetramina[1][TTRM * 2] = { 2, 3, 2, 3, 2, 3, 3, 2 };
+};
+
+class TTetramina : public TetraminaVirtual
 {
 public:
 
@@ -227,7 +176,7 @@ private:
 
 };
 
-class ITetramina : public Tetramina2
+class ITetramina : public TetraminaVirtual
 {
 public:
 
@@ -251,6 +200,68 @@ private:
 
 };
 
+class Tetramina
+{
+public:
+	TetraminaVirtual* tmp;
+
+	Tetramina(int figureNum)
+	{		
+		switch (figureNum)
+		{
+		case 0: //O
+		{
+			tmp = &oTetramina;
+
+		}break;
+
+		case 1: // T
+		{			
+			tmp = &tTetramina;
+		}break;
+
+		case 2: //I
+		{			
+			tmp = &iTetramina;
+		}break;
+		default:
+			break;
+		}
+	};
+
+	/*TetraminaVirtual *getFig()
+	{
+		return &figure;
+	}*/
+
+	int getTetramNum()
+	{
+		return tetramNum;
+	}
+
+private:
+
+	OTetramina oTetramina;
+	TTetramina tTetramina;
+	ITetramina iTetramina;
+
+	int tetramX[TTRM];
+	int tetramY[TTRM];
+	int tetramNum;
+	int collsNum;
+
+	void setTetramVal(int*  x, int  z)
+	{
+		for (size_t i = 0; i < TTRM; i++)
+		{
+			tetramX[i] = x[i];
+			tetramY[i] = x[i + TTRM];
+		}
+		tetramNum = z;
+		collsNum = 0;
+	}
+
+};
 
 class Glass
 {
@@ -365,12 +376,10 @@ int main() {
 			int xMain = 0, xTmp = 0;// начальное положене фигуры
 			bool collapse = false;
 
-			Tetramina2 *newTetramina, *nextTetramina, *tmpTetramina;
-			Tetramina mainFigure(2, newTetramina);
-			
-			//(randTetr); //randTetr // фигура основная
-			Tetramina nextFigure(2, nextTetramina); //randNext // фигура следующая (в окошке)
-			Tetramina tmpFigure(2, tmpTetramina);
+			Tetramina mainFigure(2);//(randTetr);  // фигура основная
+			Tetramina nextFigure(2); //randNext // фигура следующая (в окошке)
+			Tetramina spareFigure(2); //(randTetr);  // фигура хранения		
+
 
 			//Figure mainFigure(randTetr); //randTetr // фигура основная
 			//Figure nextFigure(randNext); //randNext // фигура следующая (в окошке)
@@ -383,7 +392,7 @@ int main() {
 
 				for (size_t i = 0; i < 3; i++) //колличество нажатий на кнопки за одну иттерацию
 				{
-					tmpFigure = mainFigure;
+					spareFigure = mainFigure;
 
 					xTmp = xMain;//временная х на случай наползания слева-справа
 
@@ -397,9 +406,7 @@ int main() {
 							if (anyEvent.key.code == Keyboard::Up)
 							{//поворот фигуры
 								//tetrAn++;
-								//mainFigure.transform(randTetr, tetrAn);
-								newTetramina->transform;
-								
+								mainFigure.tmp->transform();
 							};
 						//if (anyEvent.key.code == Keyboard::Left) x = x - 1;
 						//if (anyEvent.key.code == Keyboard::Right) x = x + 1;
@@ -410,13 +417,13 @@ int main() {
 					}
 					for (size_t i = 0; i < TTRM; i++)
 					{
-						collapse = mainGlass.getPoint((newTetramina->getYTetram(i) + yMain), (newTetramina->getXTetram(i) + xMain))
-							|| (newTetramina->getXTetram(i) + xMain >= WidthOfGlass)
-							|| (newTetramina->getXTetram(i) + xMain < 0);
+						collapse = mainGlass.getPoint((mainFigure.tmp->getYTetram(i) + yMain), (mainFigure.tmp->getXTetram(i) + xMain))
+							|| (mainFigure.tmp->getXTetram(i) + xMain >= WidthOfGlass)
+							|| (mainFigure.tmp->getXTetram(i) + xMain < 0);
 						if (collapse == true)
 						{
 							xMain = xTmp;
-							mainFigure = tmpFigure;
+							mainFigure = spareFigure;
 							collapse = false;
 							break;
 						}
@@ -427,7 +434,7 @@ int main() {
 
 					for (size_t i = 0; i < TTRM; i++)
 					{
-						toPrintGlass.setPoint((newTetramina->getYTetram(i) + yMain), (newTetramina->getXTetram(i) + xMain), randTetr);
+						toPrintGlass.setPoint((mainFigure.tmp->getYTetram(i) + yMain), (mainFigure.tmp->getXTetram(i) + xMain), randTetr);
 						//toPrintGlass.setPoint((mainFigure.getYTetram(i) + yMain), (mainFigure.getXTetram(i) + xMain), mainFigure.getTetramNum());// старый вариант
 					};
 
@@ -453,7 +460,7 @@ int main() {
 						{
 							s.setTextureRect(IntRect(randNext * 18, 0, 18, 18));
 							//s.setTextureRect(IntRect(nextFigure.getTetramNum() * 18, 0, 18, 18));// старый вариант
-							s.setPosition(nextTetramina->getXTetram(i) * 18, nextTetramina->getYTetram(i) * 18);
+							s.setPosition(nextFigure.tmp->getXTetram(i) * 18, nextFigure.tmp->getYTetram(i) * 18);
 							s.move(240, 72); //offset
 							window.draw(s);
 						}
@@ -468,8 +475,8 @@ int main() {
 
 				for (size_t i = 0; i < TTRM; i++)
 				{
-					collapse = mainGlass.getPoint((newTetramina->getYTetram(i) + yMain) + 1, (newTetramina->getXTetram(i) + xMain))
-						|| (newTetramina->getYTetram(i) + yMain >= HightOfGlass);
+					collapse = mainGlass.getPoint((mainFigure.tmp->getYTetram(i) + yMain) + 1, (mainFigure.tmp->getXTetram(i) + xMain))
+						|| (mainFigure.tmp->getYTetram(i) + yMain >= HightOfGlass);
 					if (collapse == true)	break;
 				}
 
