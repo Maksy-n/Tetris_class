@@ -17,12 +17,12 @@ const int TTRM = 4;
 class TetraminaVirtual
 {
 public:
-	virtual int getXTetram(int i) = 0;
 
-	virtual int getYTetram(int i) = 0;
-
+	virtual int getXTetram(int i) = 0;// получение значения X		
+	
+	virtual int getYTetram(int i) = 0;  // получение значения Y
+	
 	virtual void transform() = 0;
-
 };
 
 /*описание точек фигуры:
@@ -44,7 +44,7 @@ public:
 	{
 		tetramAngle;
 	};
-private:
+	//private:
 	int tetramAngle = 0;
 	int tetramina[1][TTRM * 2] = { 2, 2, 3, 3, 2, 3, 3, 2 };
 };
@@ -118,9 +118,9 @@ private:
 	int tetramAngle = 0; // переменная поворота
 	int tetramina[4][TTRM * 2] = { 1, 2, 3, 1, 1, 1, 1, 2,
 									2, 3, 3, 3, 1, 1, 2, 3,
-									1, 2, 3, 2, 3, 3, 3, 4,
+									1, 2, 3, 3, 3, 3, 3, 2,
 									1, 1, 1, 2, 1, 2, 3, 3 };
-}; 
+};
 
 class JTetramina : public TetraminaVirtual
 {
@@ -142,14 +142,13 @@ public:
 private:
 	int tetramAngle = 0; // переменная поворота
 	int tetramina[4][TTRM * 2] = { 1, 2, 3, 3, 1, 1, 1, 2,
-									2, 3, 3, 4, 3, 3, 2, 1,
-									1, 2, 3, 2, 1, 1, 1, 2,
-									1, 1, 1, 2, 1, 2, 3, 3 };
+									2, 3, 3, 3, 3, 3, 2, 1,
+									1, 2, 3, 1, 3, 3, 3, 2,
+									1, 1, 1, 2, 1, 2, 3, 1 };
 };
 class STetramina : public TetraminaVirtual
 {
 public:
-
 	int getXTetram(int i) override // получение значения X
 	{
 		return tetramina[tetramAngle][i];
@@ -172,12 +171,11 @@ private:
 class ZTetramina : public TetraminaVirtual
 {
 public:
-
 	int getXTetram(int i) override // получение значения X
 	{
 		return tetramina[tetramAngle][i];
 	}
-	int getYTetram(int i)override  // получение значения Y
+	int getYTetram(int i) override  // получение значения Y
 	{
 		return tetramina[tetramAngle][i + 4];
 	}
@@ -196,7 +194,7 @@ private:
 class Tetramina
 {
 public:
-	TetraminaVirtual* tmp;
+	TetraminaVirtual* newVirt;
 
 	Tetramina(int figureNum)
 	{
@@ -204,35 +202,35 @@ public:
 		{
 		case 0: //O
 		{
-			tmp = &oTetramina;
+			newVirt = &oTetramina;
 		}break;
 
 		case 1: // T
 		{
-			tmp = &tTetramina;
+			newVirt = &tTetramina;
 		}break;
 
 		case 2: //I
 		{
-			tmp = &iTetramina;
+			newVirt = &iTetramina;
 		}break;
 		case 3: //L
 		{
-			tmp = &lTetramina;
+			newVirt = &lTetramina;
 		}break;
 
 		case 4: // J
 		{
-			tmp = &jTetramina;
+			newVirt = &jTetramina;
 		}break;
 
 		case 5: //S
 		{
-			tmp = &sTetramina;
+			newVirt = &sTetramina;
 		}break;
 		case 6: //Z
 		{
-			tmp = &zTetramina;
+			newVirt = &zTetramina;
 		}break;
 		default:
 			break;
@@ -245,15 +243,14 @@ private:
 	ITetramina iTetramina;
 	LTetramina lTetramina;
 	JTetramina jTetramina;
-	STetramina sTetramina; 
+	STetramina sTetramina;
 	ZTetramina zTetramina;
-	
 };
+
 
 class Glass
 {
 public:
-
 	bool getPoint(int Y, int X)
 	{
 		return theGlass[Y][X].point;
@@ -307,7 +304,7 @@ public:
 	};
 
 private:
-	struct GlassStuct
+	struct GlassStuct // элементы стакана
 	{
 		bool point = 0;
 		int color = 0;
@@ -319,7 +316,7 @@ private:
 int main() {
 	int score = 0;
 	int level = 0;
-	int randTetr = 0, randNext = rand() % 3, tetrAn = 0;// фигура
+	int randTetr = 0, randNext = rand() % 7, tetrAn = 0;// фигура
 	int yMain = 0;
 	unsigned long long tetrTmp = 0;
 	unsigned int sleepTime = 105;
@@ -330,7 +327,7 @@ int main() {
 
 	srand(time(0));
 
-	RenderWindow window(VideoMode(320, 480), "Tetris");
+	RenderWindow window(VideoMode(320, 480), "Tetris");  
 
 	Texture t1, t2, t3;
 	t1.loadFromFile("images/tiles.png");
@@ -388,7 +385,7 @@ int main() {
 							if (anyEvent.key.code == Keyboard::Up)
 							{
 								//поворот фигуры								
-								mainFig.tmp->transform();
+								mainFig.newVirt->transform();
 							};
 
 						if (Keyboard::isKeyPressed(Keyboard::Left)) xMain = xMain - 1; //лево	
@@ -397,9 +394,9 @@ int main() {
 					}
 					for (size_t i = 0; i < TTRM; i++) // проверка столкновений горизонтальная 
 					{
-						collapse = mainGlass.getPoint((mainFig.tmp->getYTetram(i) + yMain), (mainFig.tmp->getXTetram(i) + xMain))
-							|| (mainFig.tmp->getXTetram(i) + xMain >= WidthOfGlass)
-							|| (mainFig.tmp->getXTetram(i) + xMain < 0);
+						collapse = mainGlass.getPoint((mainFig.newVirt->getYTetram(i) + yMain), (mainFig.newVirt->getXTetram(i) + xMain))
+							|| (mainFig.newVirt->getXTetram(i) + xMain >= WidthOfGlass)
+							|| (mainFig.newVirt->getXTetram(i) + xMain < 0);
 						if (collapse == true) // отменяем сдвиг если есть припятствия по бокам
 						{
 							xMain = xTmp;
@@ -414,19 +411,19 @@ int main() {
 
 					for (size_t i = 0; i < TTRM; i++)
 					{
-						toPrintGlass.setPoint((mainFig.tmp->getYTetram(i) + yMain), (mainFig.tmp->getXTetram(i) + xMain), randTetr);
+						toPrintGlass.setPoint((mainFig.newVirt->getYTetram(i) + yMain), (mainFig.newVirt->getXTetram(i) + xMain), randTetr);
 					};
-				
+
 					//system("cls");
 					//Draw
 					{
 						window.clear(Color::White);
 						window.draw(background);
 
-						for (int i = 2; i < HightOfGlass; i++)
+						for (int i = 2; i < HightOfGlass; i++) // основной стакан
+						
 							for (int j = 0; j < WidthOfGlass; j++)
-							{
-								//if (field[i][j] == 0) continue;
+							{								
 								if (toPrintGlass.getPoint(i, j) == 0) continue;
 								s.setTextureRect(IntRect(toPrintGlass.getColor(i, j) * 18, 0, 18, 18));
 
@@ -435,10 +432,10 @@ int main() {
 								window.draw(s);
 							}
 
-						for (int i = 0; i < 4; i++)
+						for (int i = 0; i < 4; i++) // следующая фигура, сбоку
 						{
 							s.setTextureRect(IntRect(randNext * 18, 0, 18, 18));
-							s.setPosition(nextFig.tmp->getXTetram(i) * 18, nextFig.tmp->getYTetram(i) * 18);
+							s.setPosition(nextFig.newVirt->getXTetram(i) * 18, nextFig.newVirt->getYTetram(i) * 18);
 							s.move(240, 72); //offset
 							window.draw(s);
 						}
@@ -450,8 +447,8 @@ int main() {
 
 				for (size_t i = 0; i < TTRM; i++)// проверка столкновения вертикальная
 				{
-					collapse = mainGlass.getPoint((mainFig.tmp->getYTetram(i) + yMain) + 1, (mainFig.tmp->getXTetram(i) + xMain)) // фигура +1 клетка  
-						|| (mainFig.tmp->getYTetram(i) + yMain >= HightOfGlass - 1);
+					collapse = mainGlass.getPoint((mainFig.newVirt->getYTetram(i) + yMain) + 1, (mainFig.newVirt->getXTetram(i) + xMain)) // фигура +1 клетка  
+						|| (mainFig.newVirt->getYTetram(i) + yMain >= HightOfGlass - 1);
 					if (yMain >= 20) cout << "JJJJ";
 					if (collapse == true)	break; // останавливает при первом-же столкновении
 				}
