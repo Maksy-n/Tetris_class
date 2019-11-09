@@ -125,7 +125,7 @@ public:
 	{
 		this->transformTmp = other.transformTmp;
 		this->transformVal = other.transformVal;
-		if(this->tetramina!=nullptr)
+		if (this->tetramina != nullptr)
 		{
 			delete[]this->tetramina;
 		}
@@ -235,7 +235,11 @@ int main() {
 	while (window.isOpen())
 	{
 		Glass mainGlass;
-		Glass toPrintGlass;
+		Glass toPrintGlass; //временный стакан
+		float time = clock.getElapsedTime().asMicroseconds(); //дать прошедшее время в микросекундах
+		clock.restart(); //перезагружает время
+		time = time / 1600; //скорость игры
+
 		do
 		{
 			randTetr = randNext;//текущая фигура
@@ -256,11 +260,19 @@ int main() {
 
 			for (yMain = 0; yMain < HightOfGlass; yMain++)//цикл опускания фигуры
 			{
-				toPrintGlass = mainGlass; // переносим значения из временного стакана перед новым ходом
+				toPrintGlass = mainGlass; // переносит значения из временного стакана перед новым ходом
 
 
 
-				for (size_t i = 0; i < 3; i++) //колличество нажатий на кнопки за одну иттерацию
+
+
+				//for (size_t i = 0; i <1; i++) //колличество нажатий на кнопки за одну иттерацию
+
+
+
+
+
+
 				{
 					spareFig = mainFig;
 
@@ -293,7 +305,7 @@ int main() {
 						collapse = mainGlass.getPoint((mainFig.getYTetram(i) + yMain), (mainFig.getXTetram(i) + xMain))
 							|| (mainFig.getXTetram(i) + xMain >= WidthOfGlass)
 							|| (mainFig.getXTetram(i) + xMain < 0);
-						if (collapse == true) // отменяем сдвиг если есть припятствия по бокам
+						if (collapse == true) // отменяет сдвиг если есть припятствия по бокам
 						{
 							xMain = xTmp;
 							mainFig = spareFig;
@@ -303,10 +315,18 @@ int main() {
 					}
 					this_thread::sleep_for(chrono::milliseconds(sleepTime)); // задержка
 
-					for (size_t i = 0; i < TTRM; i++)
+					for (size_t i = 0; i < TTRM; i++)// вносит значения на слой для печати
 					{
 						toPrintGlass.setPoint((mainFig.getYTetram(i) + yMain), (mainFig.getXTetram(i) + xMain), randTetr);
 					};
+
+					for (size_t i = 0; i < TTRM; i++)// проверка столкновения вертикальная
+					{
+						collapse = mainGlass.getPoint((mainFig.getYTetram(i) + yMain) + 1, (mainFig.getXTetram(i) + xMain))
+							|| (mainFig.getYTetram(i) + yMain >= HightOfGlass - 1);// фигура +1 клетка  
+
+						if (collapse == true)	break; // останавливает при первом-же столкновении
+					}
 
 					//system("cls");
 					//Draw
@@ -315,7 +335,7 @@ int main() {
 						window.draw(background);
 
 						for (int i = 2; i < HightOfGlass; i++) // основной стакан, старт с линии 2
-
+						{
 							for (int j = 0; j < WidthOfGlass; j++)
 							{
 								if (toPrintGlass.getPoint(i, j) == 0) continue;
@@ -325,7 +345,7 @@ int main() {
 								s.move(28, 31); //offset
 								window.draw(s);
 							}
-
+						}
 						for (int i = 0; i < 4; i++) // следующая фигура, сбоку
 						{
 							s.setTextureRect(IntRect(randNext * 18, 0, 18, 18));
@@ -339,13 +359,6 @@ int main() {
 					//end draw
 				}
 
-				for (size_t i = 0; i < TTRM; i++)// проверка столкновения вертикальная
-				{
-					collapse = mainGlass.getPoint((mainFig.getYTetram(i) + yMain) + 1, (mainFig.getXTetram(i) + xMain)) // фигура +1 клетка  
-						|| (mainFig.getYTetram(i) + yMain >= HightOfGlass - 1);
-
-					if (collapse == true)	break; // останавливает при первом-же столкновении
-				}
 				if (collapse == true)	break;
 			}
 			mainGlass = toPrintGlass;
