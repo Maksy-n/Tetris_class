@@ -236,9 +236,6 @@ int main() {
 	{
 		Glass mainGlass;
 		Glass toPrintGlass; //временный стакан
-		float time = clock.getElapsedTime().asMicroseconds(); //дать прошедшее время в микросекундах
-		clock.restart(); //перезагружает время
-		time = time / 1600; //скорость игры
 
 		do
 		{
@@ -248,7 +245,7 @@ int main() {
 			level = score / 1000 + 1;// размер уровня 1000 очков +1 - начинаем с первого
 
 			sleepTime = 101 - (level * 10) * (level <= 10) - 100 * (level > 10);//скорость игры время задержки подобранное 
-
+			cout << sleepTime << endl;
 			//scoreLevel(tetramNext.part, score, level);//печать элементов////
 
 			int xMain = 0, xTmp = 0;// начальное положене фигуры
@@ -260,21 +257,18 @@ int main() {
 
 			for (yMain = 0; yMain < HightOfGlass; yMain++)//цикл опускания фигуры
 			{
-				toPrintGlass = mainGlass; // переносит значения из временного стакана перед новым ходом
-
-
-
-
-
-				//for (size_t i = 0; i <1; i++) //колличество нажатий на кнопки за одну иттерацию
-
-
-
-
-
-
+								   				 
+				
+				float time1 = 0;// время в микросекундах
+				clock.restart(); //перезагружает время
+				//for (size_t i = 0; i <5; i++) //колличество нажатий на кнопки за одну иттерацию			
+				do
 				{
-					spareFig = mainFig;
+					time1 = clock.getElapsedTime().asMicroseconds();						
+
+					toPrintGlass = mainGlass; // переносит значения из временного стакана перед новым ходом			
+					
+					spareFig = mainFig; // переносит значения из во временную фигуру		
 
 					xTmp = xMain;//временная х на случай наползания слева-справа
 
@@ -313,7 +307,7 @@ int main() {
 							break;
 						}
 					}
-					this_thread::sleep_for(chrono::milliseconds(sleepTime)); // задержка
+					//this_thread::sleep_for(chrono::milliseconds(sleepTime)); // задержка
 
 					for (size_t i = 0; i < TTRM; i++)// вносит значения на слой для печати
 					{
@@ -357,7 +351,7 @@ int main() {
 						window.display();
 					}
 					//end draw
-				}
+				} while (time1 < 150000);
 
 				if (collapse == true)	break;
 			}
