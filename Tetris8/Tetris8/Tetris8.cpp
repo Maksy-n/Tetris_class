@@ -4,221 +4,19 @@
 #include <iostream>
 #include <string>
 
+#include "Tetramina.h"
+
 using namespace std;
 using namespace sf;
 
-const int HightOfGlass = 22;
-const int WidthOfGlass = 10;
-const int TTRM = 4;
-
-class TetraminaVirtual
+int main() 
 {
-public:
-	int tetramAngle = 0;
-	int *tetraminaTempl;
-
-	TetraminaVirtual(int figureNum)
-	{
-		switch (figureNum)
-		{
-		case 0: //O
-		{
-			tetramAngle = 1;// колличество возможных вариантов фигуры
-			tetraminaTempl = new int[TTRM * 2 * tetramAngle]{ 2, 2, 3, 3, 2, 3, 3, 2 };
-		}break;
-
-		case 1: // T
-		{
-			tetramAngle = 4;
-			tetraminaTempl = new int[TTRM * 2 * tetramAngle]{ 1, 2, 3, 2, 2, 2, 2, 3,
-														2, 2, 2, 1, 1, 2, 3, 2,
-														1, 2, 3, 2, 2, 2, 2, 1,
-														2, 2, 2, 3, 1, 2, 3, 2 };
-		}break;
-
-		case 2: //I
-		{
-			tetramAngle = 2;
-			tetraminaTempl = new int[TTRM * 2 * tetramAngle]{ 2, 2, 2, 2, 0, 1, 2, 3 ,
-														3, 2, 1, 0, 2, 2, 2, 2 };
-		}break;
-
-		case 3: //L
-		{
-			tetramAngle = 4;
-			tetraminaTempl = new int[TTRM * 2 * tetramAngle]{ 1, 2, 3, 1, 1, 1, 1, 2,
-														2, 3, 3, 3, 1, 1, 2, 3,
-														1, 2, 3, 3, 3, 3, 3, 2,
-														1, 1, 1, 2, 1, 2, 3, 3 };
-		}break;
-
-		case 4: // J
-		{
-			tetramAngle = 4;
-			tetraminaTempl = new int[TTRM * 2 * tetramAngle]{ 1, 2, 3, 3, 1, 1, 1, 2,
-														2, 3, 3, 3, 3, 3, 2, 1,
-														1, 2, 3, 1, 3, 3, 3, 2,
-														1, 1, 1, 2, 1, 2, 3, 1 };
-		}break;
-
-		case 5: //S
-		{
-			tetramAngle = 2;
-			tetraminaTempl = new int[TTRM * 2 * tetramAngle]{ 1, 2, 2, 3, 3, 3, 2, 2 ,
-														1, 1, 2, 2, 1, 2, 2, 3 };
-		}break;
-		case 6: //Z
-		{
-			tetramAngle = 2;
-			tetraminaTempl = new int[TTRM * 2 * tetramAngle]{ 1, 2, 2, 3, 2, 2, 3, 3 ,
-														2, 2, 3, 3, 3, 2, 2, 1 };
-		}break;
-		default:
-			break;
-		}
-	};
-	~TetraminaVirtual()
-	{
-		delete[]tetraminaTempl;
-	}
-};
-
-class Tetramina
-{
-private:
-	int transformVal = 0;
-	int transformTmp = 0;
-	int *tetramina;
-
-public:
-	Tetramina(int numOfFigure)
-	{
-		TetraminaVirtual figure(numOfFigure);
-		transformVal = figure.tetramAngle;
-		tetramina = new int[transformVal * TTRM * 2];
-		for (size_t i = 0; i < transformVal * TTRM * 2; i++)
-		{
-			tetramina[i] = figure.tetraminaTempl[i];
-		}
-	}
-
-	int getXTetram(int numOfVal)
-	{
-		int ix = transformTmp * TTRM * 2 + numOfVal;
-		return tetramina[ix];
-	};
-
-	int getYTetram(int numOfVal)
-	{
-		int iy = transformTmp * TTRM * 2 + numOfVal + 4;
-		return tetramina[iy];
-	};
-
-	void transform()
-	{
-		transformTmp = (transformTmp + 1) % transformVal;
-	}
-
-	void operator=(const Tetramina &other)
-	{
-		this->transformTmp = other.transformTmp;
-		this->transformVal = other.transformVal;
-		if (this->tetramina != nullptr)
-		{
-			delete[]this->tetramina;
-		}
-		this->tetramina = new int[other.transformVal * TTRM * 2];
-		for (size_t i = 0; i < (other.transformVal * TTRM * 2); i++)
-		{
-			this->tetramina[i] = other.tetramina[i];
-		}
-	}
-
-	~Tetramina()
-	{
-		delete tetramina;
-	}
-};
-
-class Glass
-{
-public:
-	bool getPoint(int Y, int X)
-	{
-		return theGlass[Y][X].point;
-	}
-	int getColor(int Y, int X)
-	{
-		return theGlass[Y][X].color;
-	}
-
-	void setPoint(int Y, int X, int setColor)
-	{
-		theGlass[Y][X].point = true;
-		theGlass[Y][X].color = setColor;
-	}
-
-	int delLine() // удаление линий
-	{
-		bool delLine = false;
-		int scoreTmp = 0;
-		do
-		{
-
-
-			delLine = false;
-			for (int i = HightOfGlass - 1; i > 1; i--)
-			{
-				scoreTmp = scoreTmp + scoreTmp * (int)delLine + 100 * (int)delLine;//подсчёт счёта по хитрой формуле
-				for (size_t j = 0; j < WidthOfGlass; j++)
-				{
-					if (theGlass[i][j].point == 0)
-					{
-						delLine = false;
-						break;
-					}
-					else
-					{
-						delLine = true;
-					}
-				}
-				if (delLine == true)
-				{
-					for (int k = i; k > 1; k--) {
-						for (size_t l = 0; l < WidthOfGlass; l++)
-							theGlass[k][l] = theGlass[k - 1][l];
-					}
-					i++;
-				}
-			}
-		} while (delLine == true);
-
-		return scoreTmp;// счёт
-	};
-
-private:
-	struct GlassStuct // элементы стакана
-	{
-		bool point = 0;
-		int color = 0;
-	};
-
-	GlassStuct theGlass[HightOfGlass][WidthOfGlass];
-};
-
-int main() {
 	int score = 0;
 	int level = 0;
 	int randTetr = 0, randNext = rand() % 7, tetrAn = 0;// фигура
 	int yMain = 0;
-	unsigned long long tetrTmp = 0;
 	unsigned int sleepTime = 105;
-
 	bool exitToMain = false;
-
-	int keyPad(unsigned int&);
-
-	srand(time(0));
 
 	RenderWindow window(VideoMode(300, 420), "Tetris");
 
@@ -254,8 +52,6 @@ int main() {
 
 			for (yMain = 0; yMain < HightOfGlass; yMain++)//цикл опускания фигуры
 			{
-
-
 				float time1 = 0;// время в микросекундах
 				clock.restart(); //перезагружает время задержки	
 
@@ -282,9 +78,8 @@ int main() {
 
 						if (anyEvent.type == Event::KeyPressed)
 							if (anyEvent.key.code == Keyboard::Up)
-							{
-								//поворот фигуры								
-								mainFig.transform();
+							{														
+								mainFig.transform();//поворот фигуры		
 							};
 
 						if (Keyboard::isKeyPressed(Keyboard::Left)) xMain = xMain - 1; //лево	
@@ -304,8 +99,7 @@ int main() {
 							break;
 						}
 					}
-					//this_thread::sleep_for(chrono::milliseconds(sleepTime)); 
-
+					
 					for (size_t i = 0; i < TTRM; i++)// вносит значения на слой для печати
 					{
 						toPrintGlass.setPoint((mainFig.getYTetram(i) + yMain), (mainFig.getXTetram(i) + xMain), randTetr);
@@ -319,7 +113,7 @@ int main() {
 						if (collapse == true)	break; // останавливает при первом-же столкновении
 					}
 
-					//system("cls");
+					
 					//Draw
 					{
 						window.clear(Color::White);
@@ -330,8 +124,8 @@ int main() {
 							for (int j = 0; j < WidthOfGlass; j++)
 							{
 								if (toPrintGlass.getPoint(i, j) == 0) continue;
-								s.setTextureRect(IntRect(toPrintGlass.getColor(i, j) * 18, 0, 18, 18));
 
+								s.setTextureRect(IntRect(toPrintGlass.getColor(i, j) * 18, 0, 18, 18));
 								s.setPosition(j * 18, (i - 2) * 18);
 								s.move(30, 31); //offset
 								window.draw(s);
@@ -357,6 +151,7 @@ int main() {
 						window.display();
 					}
 					//end draw
+
 				} while (time1 < 6000 * sleepTime);// задержка (число подбирается произвольно)
 
 				if (collapse == true)	break;
