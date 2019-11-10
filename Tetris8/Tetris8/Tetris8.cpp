@@ -1,10 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "SFML/Graphics/Rect.hpp"
-#include <conio.h>
 #include <iostream>
-#include <windows.h>
-#include <thread>
+#include <string>
 
 using namespace std;
 using namespace sf;
@@ -166,11 +164,12 @@ public:
 		int scoreTmp = 0;
 		do
 		{
-			scoreTmp = scoreTmp + scoreTmp * delLine + 100 * delLine;//подсчёт счёта по хитрой формуле
+
 
 			delLine = false;
 			for (int i = HightOfGlass - 1; i > 1; i--)
 			{
+				scoreTmp = scoreTmp + scoreTmp * (int)delLine + 100 * (int)delLine;//подсчёт счёта по хитрой формуле
 				for (size_t j = 0; j < WidthOfGlass; j++)
 				{
 					if (theGlass[i][j].point == 0)
@@ -192,7 +191,7 @@ public:
 					i++;
 				}
 			}
-		} while (delLine);
+		} while (delLine == true);
 
 		return scoreTmp;// счёт
 	};
@@ -221,7 +220,7 @@ int main() {
 
 	srand(time(0));
 
-	RenderWindow window(VideoMode(320, 480), "Tetris");
+	RenderWindow window(VideoMode(300, 420), "Tetris");
 
 	Texture t1, t2, t3;
 	t1.loadFromFile("images/tiles.png");
@@ -245,8 +244,6 @@ int main() {
 			level = score / 1000 + 1;// размер уровня 1000 очков +1 - начинаем с первого
 
 			sleepTime = 101 - (level * 10) * (level <= 10) - 100 * (level > 10);//скорость игры время задержки подобранное 
-			cout << sleepTime << endl;
-			//scoreLevel(tetramNext.part, score, level);//печать элементов////
 
 			int xMain = 0, xTmp = 0;// начальное положене фигуры
 			bool collapse = false;
@@ -257,17 +254,17 @@ int main() {
 
 			for (yMain = 0; yMain < HightOfGlass; yMain++)//цикл опускания фигуры
 			{
-								   				 
-				
+
+
 				float time1 = 0;// время в микросекундах
-				clock.restart(); //перезагружает время
-				//for (size_t i = 0; i <5; i++) //колличество нажатий на кнопки за одну иттерацию			
+				clock.restart(); //перезагружает время задержки	
+
 				do
 				{
-					time1 = clock.getElapsedTime().asMicroseconds();						
+					time1 = clock.getElapsedTime().asMicroseconds();// фиксирует время задержки						
 
 					toPrintGlass = mainGlass; // переносит значения из временного стакана перед новым ходом			
-					
+
 					spareFig = mainFig; // переносит значения из во временную фигуру		
 
 					xTmp = xMain;//временная х на случай наползания слева-справа
@@ -307,7 +304,7 @@ int main() {
 							break;
 						}
 					}
-					//this_thread::sleep_for(chrono::milliseconds(sleepTime)); // задержка
+					//this_thread::sleep_for(chrono::milliseconds(sleepTime)); 
 
 					for (size_t i = 0; i < TTRM; i++)// вносит значения на слой для печати
 					{
@@ -336,7 +333,7 @@ int main() {
 								s.setTextureRect(IntRect(toPrintGlass.getColor(i, j) * 18, 0, 18, 18));
 
 								s.setPosition(j * 18, (i - 2) * 18);
-								s.move(28, 31); //offset
+								s.move(30, 31); //offset
 								window.draw(s);
 							}
 						}
@@ -344,14 +341,23 @@ int main() {
 						{
 							s.setTextureRect(IntRect(randNext * 18, 0, 18, 18));
 							s.setPosition(nextFig.getXTetram(i) * 18, nextFig.getYTetram(i) * 18);
-							s.move(240, 72); //offset
+							s.move(220, 65); //offset
 							window.draw(s);
 						}
 						window.draw(frame);
+
+						Font font;//шрифт 
+						font.loadFromFile("images/trebucbd.ttf");//  файл шрифта
+						Text text("", font, 20);// объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);
+
+						text.setString(to_string(score));//задает строку тексту
+						text.setPosition(240, 20);//позицию текста
+						window.draw(text);
+
 						window.display();
 					}
 					//end draw
-				} while (time1 < 150000);
+				} while (time1 < 6000 * sleepTime);// задержка (число подбирается произвольно)
 
 				if (collapse == true)	break;
 			}
