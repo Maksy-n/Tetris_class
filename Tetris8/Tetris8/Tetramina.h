@@ -1,8 +1,8 @@
 #pragma once
 
- const int HightOfGlass = 22;
- const int WidthOfGlass = 10;
- const int TTRM = 4;
+const int HightOfGlass = 22;
+const int WidthOfGlass = 10;
+const int TTRM = 4;
 
 class Tetramina // фигуры
 {
@@ -39,7 +39,7 @@ private:
 		bool point = 0;
 		int color = 0;
 	};
-	GlassStuct theGlass[HightOfGlass][WidthOfGlass];
+	GlassStuct mainGlass[HightOfGlass][WidthOfGlass];
 
 public:	
 	bool getPoint(int Y, int X);

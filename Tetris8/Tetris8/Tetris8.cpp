@@ -1,10 +1,7 @@
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include "SFML/Graphics/Rect.hpp"
 #include <iostream>
-#include <string>
 
 #include "Tetramina.h"
+#include "Draw.h"
 
 using namespace std;
 using namespace sf;
@@ -18,20 +15,11 @@ int main()
 	unsigned int sleepTime = 105;
 	bool exitToMain = false;
 
-	RenderWindow window(VideoMode(300, 420), "Tetris");
-
-	Texture t1, t2, t3;
-	t1.loadFromFile("images/tiles.png");
-	t2.loadFromFile("images/background.png");
-	t3.loadFromFile("images/frame.png");
-
-	Sprite s(t1), background(t2), frame(t3);
-
-	Clock clock;
-
-	while (window.isOpen())
+	Draw show;	
+	
+	while (show.window.isOpen())
 	{
-		Glass mainGlass;
+		Glass mainGlass;	//основной стакан, где хранятся предыдущие фигуры
 		Glass toPrintGlass; //временный стакан
 
 		do
@@ -53,11 +41,11 @@ int main()
 			for (yMain = 0; yMain < HightOfGlass; yMain++)//цикл опускания фигуры
 			{
 				float time1 = 0;// время в микросекундах
-				clock.restart(); //перезагружает время задержки	
+				show.clock.restart(); //перезагружает время задержки	
 
 				do
 				{
-					time1 = clock.getElapsedTime().asMicroseconds();// фиксирует время задержки						
+					time1 = show.clock.getElapsedTime().asMicroseconds();// фиксирует время задержки						
 
 					toPrintGlass = mainGlass; // переносит значения из временного стакана перед новым ходом			
 
@@ -66,11 +54,11 @@ int main()
 					xTmp = xMain;//временная х на случай наползания слева-справа
 
 					Event anyEvent;
-					while (window.pollEvent(anyEvent))
+					while (show.window.pollEvent(anyEvent))
 					{
 						if (anyEvent.type == Event::Closed)// закрытие окна и конец игры
 						{
-							window.close();
+							show.window.close();
 							return 0;
 						}
 
@@ -112,51 +100,18 @@ int main()
 
 						if (collapse == true)	break; // останавливает при первом-же столкновении
 					}
-
-					
-					//Draw
-					{
-						window.clear(Color::White);
-						window.draw(background);
-
-						for (int i = 2; i < HightOfGlass; i++) // основной стакан, старт с линии 2
-						{
-							for (int j = 0; j < WidthOfGlass; j++)
-							{
-								if (toPrintGlass.getPoint(i, j) == 0) continue;
-
-								s.setTextureRect(IntRect(toPrintGlass.getColor(i, j) * 18, 0, 18, 18));
-								s.setPosition(j * 18, (i - 2) * 18);
-								s.move(30, 31); //offset
-								window.draw(s);
-							}
-						}
-						for (int i = 0; i < 4; i++) // следующая фигура, сбоку
-						{
-							s.setTextureRect(IntRect(randNext * 18, 0, 18, 18));
-							s.setPosition(nextFig.getXTetram(i) * 18, nextFig.getYTetram(i) * 18);
-							s.move(220, 65); //offset
-							window.draw(s);
-						}
-						window.draw(frame);
-
-						Font font;//шрифт 
-						font.loadFromFile("images/trebucbd.ttf");//  файл шрифта
-						Text text("", font, 20);// объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);
-
-						text.setString(to_string(score));//задает строку тексту
-						text.setPosition(240, 20);//позицию текста
-						window.draw(text);
-
-						window.display();
-					}
-					//end draw
+										
+					show.Cls();
+					show.OnScreen(toPrintGlass);
+					show.OnScreen(nextFig, randNext);				
+					show.OnScreen(score);
+					show.ShowOn();
 
 				} while (time1 < 6000 * sleepTime);// задержка (число подбирается произвольно)
 
 				if (collapse == true)	break;
 			}
-			mainGlass = toPrintGlass;
+			mainGlass = toPrintGlass; // перенос из текущего стакана в основной, после того как фигура остановилась
 
 			score += mainGlass.delLine();//удаление линии если необходимо плюс запись очков
 
