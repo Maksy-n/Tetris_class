@@ -114,3 +114,4 @@ TetraminaVirtual::~TetraminaVirtual()
 {
 	delete[]tetraminaTempl;
 }
+

@@ -47,3 +47,5 @@ public:
 	void setPoint(int Y, int X, int setColor);
 	int delLine();
 };
+
+
