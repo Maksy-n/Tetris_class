@@ -12,7 +12,7 @@ private:
 	int *tetramina;
 
 public:
-	Tetramina(int numOfFigure);	
+	Tetramina(int numOfFigure);
 	int getXTetram(int numOfVal);
 	int getYTetram(int numOfVal);
 	void transform();
@@ -20,15 +20,16 @@ public:
 	~Tetramina();
 };
 
-class TetraminaVirtual // шаблоны
+class TetraminaTemplate // шаблоны
 {
-public:
 	int tetramAngle = 0;
 	int *tetraminaTempl;
-	TetraminaVirtual(int figureNum);
+public:
+	TetraminaTemplate(int );
+	int GetTetramAngle();
+	int *GetTetraminaTempl();
 
-
-	~TetraminaVirtual();
+	~TetraminaTemplate();
 };
 
 class Glass // стакан
@@ -41,7 +42,7 @@ private:
 	};
 	GlassStuct mainGlass[HightOfGlass][WidthOfGlass];
 
-public:	
+public:
 	bool getPoint(int Y, int X);
 	int getColor(int Y, int X);
 	void setPoint(int Y, int X, int setColor);
