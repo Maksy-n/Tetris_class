@@ -3,6 +3,7 @@
 Tetramina::Tetramina(int numOfFigure) // фигура
 {
 	TetraminaTemplate figure(numOfFigure); // создаёт на основе шаблона
+	numColor = numOfFigure;
 	transformVal = figure.GetTetramAngle();
 	tetramina = new int[transformVal * TTRM * 2];
 	int *tmp = figure.GetTetraminaTempl();
@@ -30,10 +31,16 @@ void Tetramina::transform() // поворот
 	transformTmp = (transformTmp + 1) % transformVal;
 };
 
+int Tetramina::getColor()
+{
+	return numColor;
+}
+
 void Tetramina:: operator=(const Tetramina &other)
 {
 	this->transformTmp = other.transformTmp;
 	this->transformVal = other.transformVal;
+	this->numColor = other.numColor;
 	if (this->tetramina != nullptr)
 	{
 		delete[]this->tetramina;
@@ -70,9 +77,10 @@ TetraminaTemplate::TetraminaTemplate(int figureNum) //шаблоны фигур
 		}
 		~Template()
 		{
-			delete[]templ;
+			delete[] templ;
 		}
 	};
+
 	Template *figure = new Template[7];
 
 	//O
@@ -82,38 +90,42 @@ TetraminaTemplate::TetraminaTemplate(int figureNum) //шаблоны фигур
 	// T
 	figure[1].angle = 4;
 	figure[1].templ = new int[TTRM * 2 * figure[1].angle]{ 1, 2, 3, 2, 2, 2, 2, 3,
-										2, 2, 2, 1, 1, 2, 3, 2,
-										1, 2, 3, 2, 2, 2, 2, 1,
-										2, 2, 2, 3, 1, 2, 3, 2 };
+															2, 2, 2, 1, 1, 2, 3, 2,
+															1, 2, 3, 2, 2, 2, 2, 1,
+															2, 2, 2, 3, 1, 2, 3, 2 };
 	//I
 	figure[2].angle = 2;
 	figure[2].templ = new int[TTRM * 2 * figure[2].angle]{ 2, 2, 2, 2, 0, 1, 2, 3 ,
-									3, 2, 1, 0, 2, 2, 2, 2 };
+															3, 2, 1, 0, 2, 2, 2, 2 };
 	//L
 	figure[3].angle = 4;
 	figure[3].templ = new int[TTRM * 2 * figure[3].angle]{ 1, 2, 3, 1, 1, 1, 1, 2,
-										2, 3, 3, 3, 1, 1, 2, 3,
-										1, 2, 3, 3, 3, 3, 3, 2,
-										1, 1, 1, 2, 1, 2, 3, 3 };
+															2, 3, 3, 3, 1, 1, 2, 3,
+															1, 2, 3, 3, 3, 3, 3, 2,
+															1, 1, 1, 2, 1, 2, 3, 3 };
 	// J
 	figure[4].angle = 4;
 	figure[4].templ = new int[TTRM * 2 * figure[4].angle]{ 1, 2, 3, 3, 1, 1, 1, 2,
-										2, 3, 3, 3, 3, 3, 2, 1,
-										1, 2, 3, 1, 3, 3, 3, 2,
-										1, 1, 1, 2, 1, 2, 3, 1 };
+															2, 3, 3, 3, 3, 3, 2, 1,
+															1, 2, 3, 1, 3, 3, 3, 2,
+															1, 1, 1, 2, 1, 2, 3, 1 };
 	//S
 	figure[5].angle = 2;
 	figure[5].templ = new int[TTRM * 2 * figure[5].angle]{ 1, 2, 2, 3, 3, 3, 2, 2 ,
-										1, 1, 2, 2, 1, 2, 2, 3 };
+															1, 1, 2, 2, 1, 2, 2, 3 };
 	//Z
 	figure[6].angle = 2;
 	figure[6].templ = new int[TTRM * 2 * figure[6].angle]{ 1, 2, 2, 3, 2, 2, 3, 3 ,
-										2, 2, 3, 3, 3, 2, 2, 1 };
+															2, 2, 3, 3, 3, 2, 2, 1 };
 
 	tetramAngle = figure[figureNum].angle;
+	tetraminaTempl = new int[TTRM * 2 * tetramAngle];
+	for (size_t i = 0; i < TTRM * 2 * tetramAngle; i++)
+	{
+		tetraminaTempl[i] = figure[figureNum].templ[i];
+	}
 
-	tetraminaTempl = figure[figureNum].templ;
-
+	delete[]figure;
 };
 
 int TetraminaTemplate::GetTetramAngle()

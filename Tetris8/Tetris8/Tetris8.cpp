@@ -1,49 +1,40 @@
-#include <iostream>
-
 #include "Tetramina.h"
 #include "Draw.h"
 
-using namespace std;
-using namespace sf;
-
-int main() 
+int main()
 {
 	int score = 0;
 	int level = 0;
-	int randTetr = 0, randNext = rand() % 7, tetrAn = 0;// фигура
 	int yMain = 0;
 	unsigned int sleepTime = 105;
-	bool exitToMain = false;
-
-	Draw show;	
 	
-	while (show.window.isOpen())
+	Draw show; //основной SFML
+
+	while (show.window.isOpen()) // главный цикл
 	{
 		Glass mainGlass;	//основной стакан, где хранятся предыдущие фигуры
 		Glass toPrintGlass; //временный стакан
 
+		Tetramina mainFig(rand() % 7);  // фигура основная
+		Tetramina spareFig(0);  // фигура хранения (0) просто пустое значение	
 		do
 		{
-			randTetr = randNext;//текущая фигура
-			randNext = rand() % 7; //следующая фигура			
+			Tetramina nextFig(rand() % 7); // фигура следующая (в окошке)		
 
 			level = score / 1000 + 1;// размер уровня 1000 очков +1 - начинаем с первого
 
 			sleepTime = 101 - (level * 10) * (level <= 10) - 100 * (level > 10);//скорость игры время задержки подобранное 
 
-			int xMain = 0, xTmp = 0;// начальное положене фигуры
-			bool collapse = false;
+			int xMain = 2, xTmp = 2;// начальное положене фигуры
 
-			Tetramina mainFig(randTetr);  // фигура основная
-			Tetramina nextFig(randNext); // фигура следующая (в окошке)
-			Tetramina spareFig(randTetr);  // фигура хранения		
+			bool collapse = false;
 
 			for (yMain = 0; yMain < HightOfGlass; yMain++)//цикл опускания фигуры
 			{
 				float time1 = 0;// время в микросекундах
 				show.clock.restart(); //перезагружает время задержки	
 
-				do
+				do // цикл хода одной фигуры
 				{
 					time1 = show.clock.getElapsedTime().asMicroseconds();// фиксирует время задержки						
 
@@ -53,7 +44,7 @@ int main()
 
 					xTmp = xMain;//временная х на случай наползания слева-справа
 
-					Event anyEvent;
+					Event anyEvent; //события SFML
 					while (show.window.pollEvent(anyEvent))
 					{
 						if (anyEvent.type == Event::Closed)// закрытие окна и конец игры
@@ -66,7 +57,7 @@ int main()
 
 						if (anyEvent.type == Event::KeyPressed)
 							if (anyEvent.key.code == Keyboard::Up)
-							{														
+							{
 								mainFig.transform();//поворот фигуры		
 							};
 
@@ -87,10 +78,10 @@ int main()
 							break;
 						}
 					}
-					
+
 					for (size_t i = 0; i < TTRM; i++)// вносит значения на слой для печати
 					{
-						toPrintGlass.setPoint((mainFig.getYTetram(i) + yMain), (mainFig.getXTetram(i) + xMain), randTetr);
+						toPrintGlass.setPoint((mainFig.getYTetram(i) + yMain), (mainFig.getXTetram(i) + xMain), mainFig.getColor());
 					};
 
 					for (size_t i = 0; i < TTRM; i++)// проверка столкновения вертикальная
@@ -100,10 +91,11 @@ int main()
 
 						if (collapse == true)	break; // останавливает при первом-же столкновении
 					}
-										
+
+					//Отрисовка на экране
 					show.Cls();
 					show.OnScreen(toPrintGlass);
-					show.OnScreen(nextFig, randNext);				
+					show.OnScreen(nextFig, nextFig.getColor());
 					show.OnScreen(score);
 					show.ShowOn();
 
@@ -112,8 +104,8 @@ int main()
 				if (collapse == true)	break;
 			}
 			mainGlass = toPrintGlass; // перенос из текущего стакана в основной, после того как фигура остановилась
-
-			score += mainGlass.delLine();//удаление линии если необходимо плюс запись очков
+			mainFig = nextFig; //копирование следующей фигуры в текщую перед новым ходом
+			score += mainGlass.delLine();//удаление линии если необходимо, плюс запись очков
 
 		} while (yMain != 0);
 		return score;

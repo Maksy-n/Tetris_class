@@ -1,8 +1,8 @@
 #pragma once
 
-const int HightOfGlass = 22;
-const int WidthOfGlass = 10;
-const int TTRM = 4;
+const int HightOfGlass = 22; // Высота стакана 22 клетки (20 поле+ 2 скрыты сверху)
+const int WidthOfGlass = 10;  // Ширина стакана;
+const int TTRM = 4; // "Размер" тетрамины - 4 клетки
 
 class Tetramina // фигуры
 {
@@ -10,17 +10,19 @@ private:
 	int transformVal = 0;
 	int transformTmp = 0;
 	int *tetramina;
+	int numColor;
 
 public:
 	Tetramina(int numOfFigure);
 	int getXTetram(int numOfVal);
 	int getYTetram(int numOfVal);
 	void transform();
-	void operator=(const Tetramina &other);
+	void operator=(const Tetramina &);
+	int getColor();
 	~Tetramina();
 };
 
-class TetraminaTemplate // шаблоны
+class TetraminaTemplate // шаблоны фигур
 {
 	int tetramAngle = 0;
 	int *tetraminaTempl;
@@ -28,7 +30,6 @@ public:
 	TetraminaTemplate(int );
 	int GetTetramAngle();
 	int *GetTetraminaTempl();
-
 	~TetraminaTemplate();
 };
 

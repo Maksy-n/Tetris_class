@@ -1,6 +1,5 @@
 #include "Tetramina.h"
 
-
 bool Glass::getPoint(int Y, int X)
 {
 	return mainGlass[Y][X].point;
@@ -25,15 +24,14 @@ int Glass::delLine() // удаление линий
 		delLine = false;
 		for (int i = HightOfGlass - 1; i > 1; i--)
 		{
-			scoreTmp = scoreTmp + scoreTmp * (int)delLine + 100 * (int)delLine;//подсчёт счёта по хитрой формуле
+			scoreTmp = scoreTmp + scoreTmp * (int)delLine + 100 * (int)delLine; //подсчёт счёта по хитрой формуле
 			for (size_t j = 0; j < WidthOfGlass; j++)
 			{
 				if (mainGlass[i][j].point == 0)
 				{
 					delLine = false;
 					break;
-				}
-				else
+				}	else
 				{
 					delLine = true;
 				}
