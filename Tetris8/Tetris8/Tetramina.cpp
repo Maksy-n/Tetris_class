@@ -16,11 +16,11 @@ Tetramina::Tetramina(int numOfFigure) // фигура
 
 int Tetramina::getXTetram(int numOfVal)
 {
-	int ix = transformTmp * TTRM * 2 + numOfVal;
+	int ix = transformTmp * TTRM * 2 + numOfVal; // X
 	return tetramina[ix];
 };
 
-int Tetramina::getYTetram(int numOfVal)
+int Tetramina::getYTetram(int numOfVal) // Y
 {
 	int iy = transformTmp * TTRM * 2 + numOfVal + 4;
 	return tetramina[iy];
@@ -31,7 +31,7 @@ void Tetramina::transform() // поворот
 	transformTmp = (transformTmp + 1) % transformVal;
 };
 
-int Tetramina::getColor()
+int Tetramina::getColor() 
 {
 	return numColor;
 }
@@ -81,8 +81,8 @@ TetraminaTemplate::TetraminaTemplate(int figureNum) //шаблоны фигур
 		}
 	};
 
+	//  ************ФИГУРЫ*************** //
 	Template *figure = new Template[7];
-
 	//O
 	figure[0].angle = 1;// колличество возможных вариантов фигуры
 	figure[0].templ = new int[TTRM * 2 * figure[0].angle]{ 2, 2, 3, 3, 2, 3, 3, 2 };// фигура (X,X,X,X,Y,Y,Y,Y...)
